@@ -92,7 +92,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     </style>
     </head>
     <body>
-    <a href="9003samazinglistofcards.html"></a>
     <table>
     `;
     
@@ -152,13 +151,8 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     <script>
     document.querySelectorAll("td").forEach(function(el) {
       el.addEventListener("click", function() {
-        let myidx = 0;
         const row = el.parentNode;
-        let child = el;
-        while((child = child.previousElementSibling) != null) {
-          myidx++;
-        }
-        row.nextElementSibling.childNodes[`${myidx}`].querySelector("a").focus();
+        row.nextElementSibling.querySelector("a").focus();
         row.parentNode.removeChild(row);
       });
     });
@@ -189,7 +183,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     link2.download = "Containerise (nation).txt";
     link2.click();
 
-    // Clean up by revoking the URL
     window.URL.revokeObjectURL(url);
 
     const progress = document.createElement("p")
