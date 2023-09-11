@@ -1,4 +1,6 @@
 # gotIssues Browser
+[Link](https://kractero.github.io/gi-browser/)
+
 Browser version of [9003's gotIssues](https://github.com/jmikk/gotIssues), the next step in my endless quest to make gotIssues easier to run for non-technical users. It additionally generates rules for both container and nation for the [Containerise](https://addons.mozilla.org/en-US/firefox/addon/containerise/) firefox addon.
 
 Below from and still needed from [9003's repo](https://github.com/jmikk/gotIssues)
