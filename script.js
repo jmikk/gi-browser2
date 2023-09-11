@@ -12,6 +12,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const mainName = document.getElementById("mainName").value;
     const puppetList = document.getElementById("puppetList").value;
+    const containers = document.getElementById("containers").checked;
     const puppets = puppetList.split('\n');
     const userAgent = `${mainName} Gotissues Written by 9003, Email NSWA9002@gmail.com,discord: 9003, NSNation 9003`
     const issueIdsList = []
@@ -23,8 +24,10 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         const nation = puppets[i].split(',')
         const progress = document.createElement("p")
         progress.textContent = `Processing ${nation[0]}, ${i+1}/${puppets.length}`
-        containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
-        containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
+        if (containers) {
+          containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
+          containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
+        }
         progressParagraph.appendChild(progress)
         const response = await fetch(
             "https://www.nationstates.net/cgi-bin/api.cgi/?nation=" +
@@ -41,11 +44,11 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         const xml = await response.text()
         const xmlDocument = parser.parseFromString(xml, 'text/xml');
         const issueIds = xmlDocument.querySelectorAll('ISSUE');
-        const packs = xmlDocument.querySelectorAll('PACKS');
+        const packs = xmlDocument.querySelector('PACKS');
         const nationObj = {
             nation: nation[0].toLowerCase().replaceAll(' ', '_'),
             issues: [],
-            packs: packs.length
+            packs: parseInt(packs.textContent)
         }
         issueIds.forEach(issue => {
             nationObj.issues.push(issue.getAttribute('id'))
@@ -115,22 +118,19 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             </tr>`;
             issueCount++;
         }
-    
-        if (puppet.packs > 1) {
-            for (let j = 0; j < puppet.packs; j++) {
-                htmlContent += `
-                <tr>
-                  <td><p>${packCount + 1} of ${packcount}</p></td>
-                  <td>
-                    <p>
-                    <a target="_blank" href="https://www.nationstates.net/page=deck/nation=${puppet.nation}/container=${puppet.nation}/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">
-                      Link to Pack
-                    </a>
-                    </p>
-                  </td>
-                </tr>`;
-                packCount++;
-            }
+        for (let j = 0; j < puppet.packs; j++) {
+            htmlContent += `
+            <tr>
+              <td><p>${packCount + 1} of ${packcount}</p></td>
+              <td>
+                <p>
+                <a target="_blank" href="https://www.nationstates.net/page=deck/nation=${puppet.nation}/container=${puppet.nation}/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">
+                  Link to Pack
+                </a>
+                </p>
+              </td>
+            </tr>`;
+            packCount++;
         }
     }
     
@@ -169,21 +169,24 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     a.click();
     document.body.removeChild(a);
 
-    const blob = new Blob([containerise_container], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = "Containerise (container).txt";
-    link.click();
+    if (containers) {
+      const blob = new Blob([containerise_container], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "Containerise (container).txt";
+      link.click();
 
-    const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
-    const url2 = window.URL.createObjectURL(blob2);
-    const link2 = document.createElement('a');
-    link2.href = url2;
-    link2.download = "Containerise (nation).txt";
-    link2.click();
+      const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
+      const url2 = window.URL.createObjectURL(blob2);
+      const link2 = document.createElement('a');
+      link2.href = url2;
+      link2.download = "Containerise (nation).txt";
+      link2.click();
 
-    window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url2);
+    }
 
     const progress = document.createElement("p")
     progress.textContent = `Finished processing`
