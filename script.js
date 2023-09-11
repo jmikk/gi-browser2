@@ -158,7 +158,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         while((child = child.previousElementSibling) != null) {
           myidx++;
         }
-        row.nextElementSibling.childNodes[myidx].querySelector("a").focus();
+        row.nextElementSibling.childNodes[`${myidx}`].querySelector("a").focus();
         row.parentNode.removeChild(row);
       });
     });
