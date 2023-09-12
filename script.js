@@ -28,7 +28,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
           containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
           containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
         }
-        progressParagraph.appendChild(progress)
+        progressParagraph.prepend(progress)
         const response = await fetch(
             "https://www.nationstates.net/cgi-bin/api.cgi/?nation=" +
             nation[0] +
@@ -190,5 +190,5 @@ document.querySelector("form").addEventListener("submit", async (event) => {
 
     const progress = document.createElement("p")
     progress.textContent = `Finished processing`
-    progressParagraph.appendChild(progress)
+    progressParagraph.prepend(progress)
 });
