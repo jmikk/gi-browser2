@@ -1,4 +1,4 @@
-let version = "7.1"
+let version = "7.1";
 const parser = new DOMParser();
 
 function sleep(ms) {
@@ -59,120 +59,61 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             progress.textContent = `Error processing ${nation[0]} with ${err}` 
         }
     }
-    const totalcount = issueIdsList.reduce((count, puppet) => count + puppet.issues.length, 0);
-    const packcount = issueIdsList.reduce((count, puppet) => count + puppet.packs, 0);
-    let htmlContent = `
-    <html>
-    <head>
-    <style>
-    td.createcol p {
-      padding-left: 10em;
-    }
+
+    // Function to open the next link in a new tab
+    function openNextLink() {
+        if (currentIndex < issueIdsList.length) {
+            const puppet = issueIdsList[currentIndex];
+            const issueIndex = currentIndex;
+            currentIndex++;
     
-    a {
-      text-decoration: none;
-      color: black;
-    }
+            // Construct the URL to the issue
+            const issueUrl = `https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[issueIndex]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/`;
     
-    a:visited {
-      color: grey;
-    }
+            // Open the URL in a new tab
+            window.open(issueUrl, '_blank');
     
-    table {
-      border-collapse: collapse;
-      display: table-cell;
-      max-width: 100%;
-      border: 1px solid darkorange;
-    }
-    
-    tr, td {
-      border-bottom: 1px solid darkorange;
-    }
-    
-    td p {
-      padding: 0.5em;
-    }
-    
-    tr:hover {
-      background-color: lightgrey;
-    }
-    </style>
-    </head>
-    <body>
-    <table>
-    `;
-    
-    let issueCount = 0;
-    let packCount = 0;
-    let packContent = ''
-    for (let i = 0; i < issueIdsList.length; i++) {
-        const puppet = issueIdsList[i];
-    
-        for (let j = 0; j < puppet.issues.length; j++) {
-            htmlContent += `<tr><td><p>${issueCount + 1} of ${totalcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[j]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`;
-            issueCount++;
-        }
-        for (let j = 0; j < puppet.packs; j++) {
-            packContent += `<tr><td><p>${packCount + 1} of ${packcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/page=deck/nation=${puppet.nation}/container=${puppet.nation}/?open_loot_box=1/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/autoclose=1">Link to Pack</a></p></td></tr>`;
-            packCount++;
+            // Check if there are more links to open
+            if (currentIndex < issueIdsList.length) {
+                // Enable the button for opening the next link
+                document.getElementById('openNextButton').disabled = false;
+            } else {
+                // Disable the button when all links are opened
+                document.getElementById('openNextButton').disabled = true;
+            }
         }
     }
-    htmlContent += packContent
-    htmlContent += `
-    <tr>
-      <td>
-        <p>
-          <a target="_blank" href="https://this-page-intentionally-left-blank.org/">Done!</a>
-        </p>
-      </td>
-      <td>
-        <p>
-          <a target="_blank" href="https://this-page-intentionally-left-blank.org/">Done!</a>
-        </p>
-      </td>
-    </tr>
-    </table>
-    <script>
-    document.querySelectorAll("td").forEach(function(el) {
-      el.addEventListener("click", function() {
-        const row = el.parentNode;
-        row.nextElementSibling.querySelector("a").focus();
-        row.parentNode.removeChild(row);
-      });
-    });
-    </script>
-    </body>
-    </html>
-    `;
-    const htmlBlob = new Blob([htmlContent], { type: "text/html" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(htmlBlob);
-    a.download = "9003samazinglistofcards.html";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
 
-    if (containers) {
-      const blob = new Blob([containerise_container], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = "Containerise (container).txt";
-      link.click();
+    // Add an event listener for the "Open Next Link" button
+    document.getElementById('openNextButton').addEventListener('click', openNextLink);
 
-      const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
-      const url2 = window.URL.createObjectURL(blob2);
-      const link2 = document.createElement('a');
-      link2.href = url2;
-      link2.download = "Containerise (nation).txt";
-      link2.click();
-
-      window.URL.revokeObjectURL(url);
-      window.URL.revokeObjectURL(url2);
+    // Initial button state (disable if no links to open)
+    if (issueIdsList.length === 0) {
+        document.getElementById('openNextButton').disabled = true;
+    } else {
+        document.getElementById('openNextButton').disabled = false;
     }
 
     const progress = document.createElement("p")
     progress.textContent = `Finished processing`
     progressParagraph.prepend(progress)
+
+    if (containers) {
+        const blob = new Blob([containerise_container], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "Containerise (container).txt";
+        link.click();
+  
+        const blob2 = new Blob([containerise_nation], { type: 'text/plain' });
+        const url2 = window.URL.createObjectURL(blob2);
+        const link2 = document.createElement('a');
+        link2.href = url2;
+        link2.download = "Containerise (nation).txt";
+        link2.click();
+  
+        window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(url2);
+    }
 });
