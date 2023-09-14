@@ -109,7 +109,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         const puppet = issueIdsList[i];
     
         for (let j = 0; j < puppet.issues.length; j++) {
-            htmlContent += `<tr><td><p>${issueCount + 1} of ${totalcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[j]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to </a></p></td></tr>`;
+            htmlContent += `<tr><td><p>${issueCount + 1} of ${totalcount}</p></td><td><p><a target="_blank" href="https://www.nationstates.net/container=${puppet.nation}/nation=${puppet.nation}/page=show_dilemma/dilemma=${puppet.issues[j]}/template-overall=none//User_agent=${userAgent}/Script=Gotissues/Author_Email=NSWA9002@gmail.com/Author_discord=9003/Author_main_nation=9003/">Link to Issue</a></p></td></tr>`;
             issueCount++;
         }
         for (let j = 0; j < puppet.packs; j++) {
