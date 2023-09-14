@@ -19,41 +19,45 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     let containerise_nation = ''
     let containerise_container = ''
     for (let i = 0; i < puppets.length; i++) {
-        await sleep(700);
-        if (!puppets[i].includes(',')) throw new Error("FORMAT IT RIGHT PLEASE!")
-        const nation = puppets[i].split(',')
         const progress = document.createElement("p")
-        progress.textContent = `Processing ${nation[0]}, ${i+1}/${puppets.length}`
-        if (containers) {
-          containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
-          containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
-        }
-        progressParagraph.prepend(progress)
-        const response = await fetch(
-            "https://www.nationstates.net/cgi-bin/api.cgi/?nation=" +
-            nation[0] +
-            "&q=issues+packs",
-            {
-                method: "GET",
-                headers: {
-                    "User-Agent": userAgent,
-                    "X-Password": nation[1].replace(" ", "_"),
-                },
+        try {
+            await sleep(700);
+            if (!puppets[i].includes(',')) throw new Error("FORMAT IT RIGHT PLEASE!")
+            const nation = puppets[i].split(',')
+            progress.textContent = `Processing ${nation[0]}, ${i+1}/${puppets.length}`
+            if (containers) {
+              containerise_nation += `@^.*\\.nationstates\\.net/(.*/)?nation=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
+              containerise_container += `@^.*\\.nationstates\\.net/(.*/)?container=${nation[0].toLowerCase().replaceAll(' ', '_')}(/.*)?$ , ${nation[0]}\n`
             }
-        );
-        const xml = await response.text()
-        const xmlDocument = parser.parseFromString(xml, 'text/xml');
-        const issueIds = xmlDocument.querySelectorAll('ISSUE');
-        const packs = xmlDocument.querySelector('PACKS');
-        const nationObj = {
-            nation: nation[0].toLowerCase().replaceAll(' ', '_'),
-            issues: [],
-            packs: packs ? parseInt(packs.textContent) : 0
+            progressParagraph.prepend(progress)
+            const response = await fetch(
+                "https://www.nationstates.net/cgi-bin/api.cgi/?nation=" +
+                nation[0] +
+                "&q=issues+packs",
+                {
+                    method: "GET",
+                    headers: {
+                        "User-Agent": userAgent,
+                        "X-Password": nation[1].replace(" ", "_"),
+                    },
+                }
+            );
+            const xml = await response.text()
+            const xmlDocument = parser.parseFromString(xml, 'text/xml');
+            const issueIds = xmlDocument.querySelectorAll('ISSUE');
+            const packs = xmlDocument.querySelector('PACKS');
+            const nationObj = {
+                nation: nation[0].toLowerCase().replaceAll(' ', '_'),
+                issues: [],
+                packs: packs ? parseInt(packs.textContent) : 0
+            }
+            issueIds.forEach(issue => {
+                nationObj.issues.push(issue.getAttribute('id'))
+            });
+            issueIdsList.push(nationObj)
+        } catch (err) {
+            progress.textContent = `Error processing ${nation[0]} with ${err}` 
         }
-        issueIds.forEach(issue => {
-            nationObj.issues.push(issue.getAttribute('id'))
-        });
-        issueIdsList.push(nationObj)
     }
     const totalcount = issueIdsList.reduce((count, puppet) => count + puppet.issues.length, 0);
     const packcount = issueIdsList.reduce((count, puppet) => count + puppet.packs, 0);
