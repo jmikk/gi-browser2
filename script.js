@@ -100,7 +100,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     
     let issueCount = 0;
     let packCount = 0;
-    
+    let packContent = ''
     for (let i = 0; i < issueIdsList.length; i++) {
         const puppet = issueIdsList[i];
     
@@ -119,7 +119,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             issueCount++;
         }
         for (let j = 0; j < puppet.packs; j++) {
-            htmlContent += `
+            packContent += `
             <tr>
               <td><p>${packCount + 1} of ${packcount}</p></td>
               <td>
@@ -133,7 +133,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
             packCount++;
         }
     }
-    
+    htmlContent += packContent
     htmlContent += `
     <tr>
       <td>
