@@ -48,7 +48,7 @@ document.querySelector("form").addEventListener("submit", async (event) => {
         const nationObj = {
             nation: nation[0].toLowerCase().replaceAll(' ', '_'),
             issues: [],
-            packs: parseInt(packs.textContent)
+            packs: packs ? parseInt(packs.textContent) : 0
         }
         issueIds.forEach(issue => {
             nationObj.issues.push(issue.getAttribute('id'))
